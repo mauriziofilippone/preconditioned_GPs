@@ -1,0 +1,19 @@
+Metadata-Version: 1.1
+Name: PcgComp
+Version: 0.0.1
+Summary: Comparison of Preconditioning Techniques for Kernel Matrices
+Home-page: UNKNOWN
+Author: Kurt Cutajar
+Maurizio Filippone
+Author-email: kurt.cutajar@eurecom.fr
+License: BSD 3-clause
+Description: UNKNOWN
+Keywords: machine-learning gaussian-processes kernels preconditioning
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
