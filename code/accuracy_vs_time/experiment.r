@@ -114,46 +114,18 @@ for(FOLD in 1:5) {
         B.inv.w12.k_star = matrix(0, DATA$n, DATA$ntest)
       }
     }
+
+    ## Sensibly initialize parameters
+    ## RBF case: tau = 1/(2 l^2) = 1 / (2 * sqrt(d)^2) (we assume a smooth process with lengthscale related to the diagonal of a d-dimensional hyper-cube)
+    if(KERNEL_TYPE == "RBF") {
+        if(MODEL == "regression") theta0 = c(log(1), log(0.1), rep(log(1/(2 * DATA$d)), NPAR-2))
+        if(MODEL == "classification") theta0 = c(log(1), 0, rep(log(1/(2 * DATA$d)), NPAR-2))
+    }
     
-    ## Initialization of parameter is not consistent across different models because we setup the experiments at different times
-    if(MODEL == "regression") theta0 = c(log(1), log(0.01), rep(log(1/sqrt(DATA$d)), NPAR-2))
-    if(MODEL == "classification") theta0 = c(log(10), 0, rep(log(1/2), NPAR-2))
-
-    ## In the original paper submission, for GP regression we initialized the parameters optimizing the log-marginal likelihood on a subset of the data
-    if(MODEL == "regression") {
-      source("gp_functions/gp_regression_chol.r")
-      
-      n_subsample = as.integer(sqrt(DATA$n)*4)
-      subsample = sample(c(1:(DATA$n)), n_subsample)
-
-      tmp.X = DATA$X
-      tmp.y = DATA$y
-      tmp.n = DATA$n
-
-      DATA$X = DATA$X[subsample,]
-      DATA$y = DATA$y[subsample]
-      DATA$n = n_subsample
-      
-      theta_global = 0
-      time_initialize = system.time(tmp <- optim(theta0, log.p.y.theta, gr=grad.log.p.y.theta, method="L-BFGS", control=list(maxit=1000, fnscale=-1)))[3]
-      time_total_rmse = time_total_rmse + time_initialize
-      time_total_neg_llik = time_total_neg_llik + time_initialize
-      
-      theta0 = tmp[[1]]
-
-      DATA$X = tmp.X
-      DATA$y = tmp.y
-      DATA$n = tmp.n
-
-      if(SOLVER %in% c("CG", "PCG")) {
-        source("gp_functions/gp_regression_cg.r")
-
-        K.inv.y <<- rep(0, DATA$n)
-        K.inv.r <<- matrix(0, DATA$n, NRVECT)
-        K.inv.k_star = matrix(0, DATA$n, DATA$ntest)
-      }
-      
-      rm(tmp.X, tmp.y, tmp.n)
+    ## ARD case: tau = 1/(2 l^2) = 1 / 2 (we assume a unit length-scale for each feature)
+    if(KERNEL_TYPE == "ARD") {
+        if(MODEL == "regression") theta0 = c(log(1), log(0.1), rep(log(1/2), NPAR-2))
+        if(MODEL == "classification") theta0 = c(log(1), 0, rep(log(1/2), NPAR-2))
     }
 
     ## theta_global is a variable that keeps track of the current valus of covariance parameters - when this changes, the code updates any quantities needed to make predictions and calculate gradients/stochastic gradients
