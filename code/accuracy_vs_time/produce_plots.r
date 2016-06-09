@@ -1,10 +1,11 @@
 ## Code to produce plots of error versus time for GPs trained using CG and preconditioned CG
 
 DATASET = "concrete"
-## DATASET = "powerplant"
-## DATASET = "protein"
-## DATASET = "credit"
-## DATASET = "spam"
+DATASET = "powerplant"
+DATASET = "protein"
+DATASET = "credit"
+DATASET = "spam"
+DATASET = "eeg"
 
 ## KERNEL_TYPE = "RBF"
 KERNEL_TYPE = "ARD"
@@ -18,7 +19,8 @@ TIME_IN_LOG = T ## Should the time axis of the plots be in log scale?
 if(TIME_IN_LOG) XLAB = expression(log[10](seconds))
 if(!TIME_IN_LOG) XLAB = "seconds"
 YLAB = list()
-YLAB[["RMSE"]] = "RMSE"
+if(DATASET %in% c("concrete", "powerplant", "protein")) YLAB[["RMSE"]] = "RMSE"
+if(DATASET %in% c("credit", "spam", "eeg")) YLAB[["RMSE"]] = "Error Rate"
 YLAB[["NEG_LLIK"]] = "Negative Test Log-Lik"
 
 NAMES_ERROR_MEASURES_GPSTUFF = list()
@@ -35,13 +37,14 @@ NAMES_DATASET_TITLE_PLOT[["powerplant"]] = "Power Plant"
 NAMES_DATASET_TITLE_PLOT[["protein"]] = "Protein"
 NAMES_DATASET_TITLE_PLOT[["credit"]] = "Credit"
 NAMES_DATASET_TITLE_PLOT[["spam"]] = "Spam"
+NAMES_DATASET_TITLE_PLOT[["eeg"]] = "EEG"
 
 ## ## ************************************************** 
 
 NRVECT = 4
 if(DATASET == "concrete") {
   STEPSIZE = 1.0
-  PREDICTEVERY = 10
+  PREDICTEVERY = 5
   PREDICTEVERY_CHOL = 3
   NFOLDS = 5
 }
@@ -57,7 +60,7 @@ if(DATASET == "protein") {
   STEPSIZE = 1.0
   PREDICTEVERY = 5
   PREDICTEVERY_CHOL = 1
-  NFOLDS = 2
+  NFOLDS = 3
 }
 
 if(DATASET == "credit") {
@@ -68,6 +71,13 @@ if(DATASET == "credit") {
 }
 
 if(DATASET == "spam") {
+  STEPSIZE = 1.0
+  PREDICTEVERY = 5
+  PREDICTEVERY_CHOL = 1
+  NFOLDS = 5
+}
+
+if(DATASET == "eeg") {
   STEPSIZE = 1.0
   PREDICTEVERY = 5
   PREDICTEVERY_CHOL = 1
@@ -110,12 +120,21 @@ if(KERNEL_TYPE == "RBF") {
   if(DATASET == "protein") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/RBF_RESULTS_PROTEIN/", sep="")
 }
 
+## if(KERNEL_TYPE == "ARD") {
+##   if(DATASET == "concrete") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_CONC/", sep="")
+##   if(DATASET == "powerplant") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_POWER/", sep="")
+##   if(DATASET == "protein") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_PROTEIN/", sep="")
+##   if(DATASET == "credit") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/CLASS/CL_RESULTS_CREDIT/", sep="")
+##   if(DATASET == "spam") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/CLASS/CL_RESULTS_SPAM/", sep="")
+## }
+
 if(KERNEL_TYPE == "ARD") {
-  if(DATASET == "concrete") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_CONC/", sep="")
-  if(DATASET == "powerplant") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_POWER/", sep="")
-  if(DATASET == "protein") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/", KERNEL_TYPE, "/ARD_RESULTS_PROTEIN/", sep="")
-  if(DATASET == "credit") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/CLASS/CL_RESULTS_CREDIT/", sep="")
-  if(DATASET == "spam") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/CLASS/CL_RESULTS_SPAM/", sep="")
+  if(DATASET == "concrete") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/REG_CONC_RES/", sep="")
+  if(DATASET == "powerplant") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/REG_POWER_RES/", sep="")
+  if(DATASET == "protein") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/REG_PROT_RES/", sep="")
+  if(DATASET == "credit") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/CL_CREDIT_RES/", sep="")
+  if(DATASET == "spam") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/CL_SPAM_RES/", sep="")
+  if(DATASET == "eeg") base_dir_gpstuff = paste("../pcgComparison/GpStuff Comparison/post_submission_results/CL_EEG_RES/", sep="")  
 }
 
 if(TIME_IN_LOG) {
